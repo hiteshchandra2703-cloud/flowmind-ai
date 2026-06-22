@@ -1,6 +1,9 @@
 import { useState } from "react"
 import { Send, Sparkles, Bot } from "lucide-react"
 
+const API_KEY = import.meta.env.VITE_GROQ_API_KEY
+console.log("API KEY:", API_KEY)
+
 const suggestions = [
   "Prioritize my tasks for today",
   "What should I focus on now?",
@@ -8,7 +11,7 @@ const suggestions = [
   "Give me a productivity tip",
 ]
 
-function AIAssistant() {
+function AIAssistant({ tasks }) {
   const [messages, setMessages] = useState([
     {
       role: "ai",
@@ -18,6 +21,33 @@ function AIAssistant() {
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
 
+  const buildContext = () => {
+    const pending = tasks.filter(t => !t.done)
+    const completed = tasks.filter(t => t.done)
+    const overdue = tasks.filter(t => {
+      if (t.done) return false
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      return new Date(t.due) < today
+    })
+
+    return `You are FlowMind, an AI productivity assistant for Hitesh, a student at ABV-IIITM Gwalior studying IMT.
+    
+Current task summary:
+- Total tasks: ${tasks.length}
+- Completed: ${completed.length}
+- Pending: ${pending.length}
+- Overdue: ${overdue.length}
+
+Pending tasks:
+${pending.map(t => `- "${t.title}" | Priority: ${t.priority} | Due: ${t.due}`).join("\n")}
+
+Overdue tasks:
+${overdue.map(t => `- "${t.title}" | Priority: ${t.priority} | Due: ${t.due}`).join("\n")}
+
+Be concise, friendly and actionable. Keep responses under 100 words. Use emojis occasionally.`
+  }
+
   const sendMessage = async (text) => {
     const userMsg = text || input
     if (!userMsg.trim()) return
@@ -26,13 +56,36 @@ function AIAssistant() {
     setInput("")
     setLoading(true)
 
-    setTimeout(() => {
+    try {
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${API_KEY}`
+        },
+        body: JSON.stringify({
+          model: "llama-3.3-70b-versatile",
+          messages: [
+            { role: "system", content: buildContext() },
+            { role: "user", content: userMsg }
+          ],
+          max_tokens: 150
+        })
+      })
+
+      const data = await response.json()
+      console.log("Groq response:", data)
+      const aiText = data.choices[0].message.content
+      setMessages(prev => [...prev, { role: "ai", text: aiText }])
+    } catch (error) {
+      console.error("Error:", error)
       setMessages(prev => [...prev, {
         role: "ai",
-        text: "I'm analyzing your tasks and will provide smart recommendations soon. Connect me to the AI backend to get real responses! 🚀"
+        text: "Sorry, I couldn't connect to AI right now. Please try again!"
       }])
-      setLoading(false)
-    }, 1000)
+    }
+
+    setLoading(false)
   }
 
   return (
@@ -69,8 +122,9 @@ function AIAssistant() {
             <div className="w-6 h-6 bg-purple-700 rounded-full flex items-center justify-center flex-shrink-0">
               <Bot size={12} className="text-white" />
             </div>
-            <div className="bg-gray-800 rounded-xl px-3 py-2 text-xs text-gray-400">
-              Thinking...
+            <div className="bg-gray-800 rounded-xl px-3 py-2 text-xs text-gray-400 flex items-center gap-1">
+              <span>Thinking</span>
+              <span className="animate-pulse">...</span>
             </div>
           </div>
         )}
