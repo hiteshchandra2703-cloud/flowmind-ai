@@ -2,13 +2,14 @@ import { useState } from "react"
 import { Send, Sparkles, Bot } from "lucide-react"
 
 const API_KEY = import.meta.env.VITE_GROQ_API_KEY
-console.log("API KEY:", API_KEY)
 
 const suggestions = [
   "Prioritize my tasks for today",
+  "Schedule my day hour by hour",
   "What should I focus on now?",
   "Break down my hardest task",
   "Give me a productivity tip",
+  "What's my progress today?",
 ]
 
 function AIAssistant({ tasks }) {
@@ -31,8 +32,16 @@ function AIAssistant({ tasks }) {
       return new Date(t.due) < today
     })
 
+    const currentHour = new Date().getHours()
+    const timeOfDay = currentHour < 12 ? "morning" : currentHour < 17 ? "afternoon" : "evening"
+    const currentDate = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })
+
     return `You are FlowMind, an AI productivity assistant for Hitesh, a student at ABV-IIITM Gwalior studying IMT.
     
+Current time context:
+- Today is ${currentDate}
+- It is currently ${timeOfDay} (${currentHour}:00)
+
 Current task summary:
 - Total tasks: ${tasks.length}
 - Completed: ${completed.length}
@@ -45,7 +54,18 @@ ${pending.map(t => `- "${t.title}" | Priority: ${t.priority} | Due: ${t.due}`).j
 Overdue tasks:
 ${overdue.map(t => `- "${t.title}" | Priority: ${t.priority} | Due: ${t.due}`).join("\n")}
 
-Be concise, friendly and actionable. Keep responses under 100 words. Use emojis occasionally.`
+Completed today:
+${completed.map(t => `- "${t.title}"`).join("\n")}
+
+Your job:
+- Give smart scheduling advice based on time of day
+- If morning: suggest most important tasks to tackle first
+- If afternoon: suggest medium priority tasks
+- If evening: suggest light tasks and planning for tomorrow
+- Always mention specific task names from the list above
+- Be concise, friendly and actionable
+- Keep responses under 120 words
+- Use emojis occasionally`
   }
 
   const sendMessage = async (text) => {
