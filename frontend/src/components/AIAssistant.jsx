@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Send, Sparkles, Bot } from "lucide-react"
+import VoiceInput from "./VoiceInput"
 
 const API_KEY = import.meta.env.VITE_GROQ_API_KEY
 
@@ -171,6 +172,10 @@ Your job:
             placeholder="Ask AI anything..."
             className="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-xs outline-none focus:border-purple-500"
           />
+          <VoiceInput onResult={(text) => {
+            setInput(text)
+            sendMessage(text)
+          }} />
           <button
             onClick={() => sendMessage()}
             className="bg-purple-600 hover:bg-purple-700 text-white p-2 rounded-lg transition-all"

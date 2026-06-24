@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { Plus, Calendar, Trash2, CheckCircle2, Circle } from "lucide-react"
+import VoiceInput from "./VoiceInput"
 
 const initialTasks = [
   { id: 1, title: "Complete AI project report", priority: "high", due: "2026-06-22", done: false },
@@ -33,14 +34,13 @@ function formatDate(dateStr) {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" })
 }
 
-function TaskList({tasks,setTasks}) {
-  
+function TaskList({ tasks, setTasks }) {
   const [newTask, setNewTask] = useState("")
   const [newDue, setNewDue] = useState("")
   const [newPriority, setNewPriority] = useState("medium")
   const [showInput, setShowInput] = useState(false)
 
-useEffect(() => {
+  useEffect(() => {
     localStorage.setItem("flowmind-tasks", JSON.stringify(tasks))
   }, [tasks])
 
@@ -116,6 +116,7 @@ useEffect(() => {
             <button onClick={addTask} className="flex-1 bg-purple-600 text-white px-4 py-2 rounded-lg text-sm">
               Add Task
             </button>
+            <VoiceInput onResult={(text) => setNewTask(text)} />
             <button onClick={() => setShowInput(false)} className="bg-gray-800 text-gray-400 px-4 py-2 rounded-lg text-sm">
               Cancel
             </button>
@@ -128,13 +129,7 @@ useEffect(() => {
           <p className="text-xs text-red-400 font-medium mb-2 uppercase tracking-wider">⚠️ Overdue</p>
           <div className="flex flex-col gap-3">
             {overdueTasks.map(task => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                onToggle={toggleTask}
-                onDelete={deleteTask}
-                overdue
-              />
+              <TaskCard key={task.id} task={task} onToggle={toggleTask} onDelete={deleteTask} overdue />
             ))}
           </div>
         </div>
@@ -145,12 +140,7 @@ useEffect(() => {
           <p className="text-xs text-gray-400 font-medium mb-2 uppercase tracking-wider">Pending</p>
           <div className="flex flex-col gap-3">
             {pendingTasks.map(task => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                onToggle={toggleTask}
-                onDelete={deleteTask}
-              />
+              <TaskCard key={task.id} task={task} onToggle={toggleTask} onDelete={deleteTask} />
             ))}
           </div>
         </div>
@@ -161,12 +151,7 @@ useEffect(() => {
           <p className="text-xs text-gray-400 font-medium mb-2 uppercase tracking-wider">Completed</p>
           <div className="flex flex-col gap-3">
             {doneTasks.map(task => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                onToggle={toggleTask}
-                onDelete={deleteTask}
-              />
+              <TaskCard key={task.id} task={task} onToggle={toggleTask} onDelete={deleteTask} />
             ))}
           </div>
         </div>
@@ -178,10 +163,7 @@ useEffect(() => {
 function TaskCard({ task, onToggle, onDelete, overdue }) {
   return (
     <div className={`flex items-center gap-3 bg-gray-900 border rounded-xl p-4 transition-all
-      ${overdue
-        ? "border-red-800 hover:border-red-600"
-        : "border-gray-800 hover:border-purple-800"
-      }
+      ${overdue ? "border-red-800 hover:border-red-600" : "border-gray-800 hover:border-purple-800"}
       ${task.done ? "opacity-50" : ""}
     `}>
       <button onClick={() => onToggle(task.id)}>
