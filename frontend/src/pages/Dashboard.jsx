@@ -5,6 +5,7 @@ import AIAssistant from "../components/AIAssistant"
 import StatsBar from "../components/StatsBar"
 import MoodCheckin from "../components/MoodCheckin"
 import Goals from "./Goals"
+import Insights from "./Insights"
 import { useGamification, XPPopup, BadgePopup, GamificationBar } from "../components/Gamification"
 
 const initialTasks = [
@@ -63,6 +64,7 @@ function Dashboard() {
             </>
           )}
           {activePage === "goals" && <Goals tasks={tasks} />}
+          {activePage === "insights" && <Insights tasks={tasks} />}
         </div>
       </div>
     </div>
