@@ -13,7 +13,7 @@ const suggestions = [
   "What's my progress today?",
 ]
 
-function AIAssistant({ tasks }) {
+function AIAssistant({ tasks, mood }) {
   const [messages, setMessages] = useState([
     {
       role: "ai",
@@ -43,6 +43,14 @@ Current time context:
 - Today is ${currentDate}
 - It is currently ${timeOfDay} (${currentHour}:00)
 
+Mood context:
+- User's current mood: ${mood || "unknown"}
+- If mood is "tired": suggest easy, low-effort tasks first
+- If mood is "okay": suggest normal task order
+- If mood is "good": suggest tackling medium priority tasks
+- If mood is "energetic": suggest tackling hard tasks first
+- If mood is "inzone": user is in deep focus mode, suggest hardest tasks
+
 Current task summary:
 - Total tasks: ${tasks.length}
 - Completed: ${completed.length}
@@ -59,10 +67,7 @@ Completed today:
 ${completed.map(t => `- "${t.title}"`).join("\n")}
 
 Your job:
-- Give smart scheduling advice based on time of day
-- If morning: suggest most important tasks to tackle first
-- If afternoon: suggest medium priority tasks
-- If evening: suggest light tasks and planning for tomorrow
+- Give smart scheduling advice based on time of day AND mood
 - Always mention specific task names from the list above
 - Be concise, friendly and actionable
 - Keep responses under 120 words

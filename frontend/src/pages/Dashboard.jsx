@@ -3,6 +3,7 @@ import Sidebar from "../components/Sidebar"
 import TaskList from "../components/TaskList"
 import AIAssistant from "../components/AIAssistant"
 import StatsBar from "../components/StatsBar"
+import MoodCheckin from "../components/MoodCheckin"
 
 const initialTasks = [
   { id: 1, title: "Complete AI project report", priority: "high", due: "2026-06-22", done: false },
@@ -23,6 +24,7 @@ function Dashboard() {
     const saved = localStorage.getItem("flowmind-tasks")
     return saved ? JSON.parse(saved) : initialTasks
   })
+  const [mood, setMood] = useState(null)
 
   const completed = tasks.filter(t => t.done).length
   const overdue = tasks.filter(t => isOverdue(t.due, t.done)).length
@@ -34,12 +36,13 @@ function Dashboard() {
 
   return (
     <div className="flex h-screen bg-gray-950 text-white overflow-hidden">
+      <MoodCheckin onMoodSelect={(m) => setMood(m)} />
       <Sidebar />
       <div className="flex flex-col flex-1 overflow-hidden">
         <StatsBar stats={stats} />
         <div className="flex flex-1 overflow-hidden">
           <TaskList tasks={tasks} setTasks={setTasks} />
-          <AIAssistant tasks={tasks} />
+          <AIAssistant tasks={tasks} mood={mood} />
         </div>
       </div>
     </div>
