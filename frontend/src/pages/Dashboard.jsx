@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Sidebar from "../components/Sidebar"
 import TaskList from "../components/TaskList"
 import AIAssistant from "../components/AIAssistant"
 import StatsBar from "../components/StatsBar"
 import MoodCheckin from "../components/MoodCheckin"
+import { useGamification, XPPopup, BadgePopup, GamificationBar } from "../components/Gamification"
 
 const initialTasks = [
   { id: 1, title: "Complete AI project report", priority: "high", due: "2026-06-22", done: false },
@@ -25,6 +26,16 @@ function Dashboard() {
     return saved ? JSON.parse(saved) : initialTasks
   })
   const [mood, setMood] = useState(null)
+  const { stats, newBadge, xpPopup, addXP, BADGES } = useGamification(tasks)
+
+  const handleSetTasks = (newTasks) => {
+    const oldCompleted = tasks.filter(t => t.done).length
+    const newCompleted = newTasks.filter(t => t.done).length
+    if (newCompleted > oldCompleted) {
+      addXP(20)
+    }
+    setTasks(newTasks)
+  }
 
   const completed = tasks.filter(t => t.done).length
   const overdue = tasks.filter(t => isOverdue(t.due, t.done)).length
@@ -32,16 +43,21 @@ function Dashboard() {
   const total = tasks.length
   const productivity = total === 0 ? 0 : Math.round((completed / total) * 100)
 
-  const stats = { completed, overdue, pending, productivity }
+  const statsData = { completed, overdue, pending, productivity }
 
   return (
     <div className="flex h-screen bg-gray-950 text-white overflow-hidden">
+      <XPPopup message={xpPopup} />
+      <BadgePopup badge={newBadge} />
       <MoodCheckin onMoodSelect={(m) => setMood(m)} />
-      <Sidebar />
+      <div className="flex flex-col w-64 bg-gray-900 border-r border-gray-800">
+        <Sidebar />
+        <GamificationBar stats={stats} BADGES={BADGES} />
+      </div>
       <div className="flex flex-col flex-1 overflow-hidden">
-        <StatsBar stats={stats} />
+        <StatsBar stats={statsData} />
         <div className="flex flex-1 overflow-hidden">
-          <TaskList tasks={tasks} setTasks={setTasks} />
+          <TaskList tasks={tasks} setTasks={handleSetTasks} />
           <AIAssistant tasks={tasks} mood={mood} />
         </div>
       </div>

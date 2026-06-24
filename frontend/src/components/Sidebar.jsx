@@ -10,7 +10,7 @@ const navItems = [
 
 function Sidebar() {
   return (
-    <div className="w-64 bg-gray-900 border-r border-gray-800 flex flex-col p-4">
+    <div className="flex-1 flex flex-col p-4 overflow-hidden">
       <div className="flex items-center gap-2 mb-8 mt-2">
         <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
           <Zap size={18} className="text-white" />
@@ -35,16 +35,8 @@ function Sidebar() {
         ))}
       </nav>
 
-      <div className="mt-auto">
-        <div className="bg-purple-950 border border-purple-800 rounded-xl p-4">
-          <p className="text-purple-300 text-xs font-medium mb-1">AI Credits</p>
-          <div className="w-full bg-purple-900 rounded-full h-1.5 mb-2">
-            <div className="bg-purple-400 h-1.5 rounded-full w-3/4"></div>
-          </div>
-          <p className="text-gray-400 text-xs">75 of 100 used</p>
-        </div>
-
-        <div className="flex items-center gap-3 mt-4 px-2">
+      <div className="mt-auto mb-4">
+        <div className="flex items-center gap-3 px-2">
           <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-sm font-bold">
             H
           </div>
