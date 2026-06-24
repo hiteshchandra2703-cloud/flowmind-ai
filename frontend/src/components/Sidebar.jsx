@@ -1,14 +1,14 @@
 import { LayoutDashboard, CheckSquare, Target, BarChart2, Settings, Zap } from "lucide-react"
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard" },
-  { icon: CheckSquare, label: "Tasks" },
-  { icon: Target, label: "Goals" },
-  { icon: BarChart2, label: "Insights" },
-  { icon: Settings, label: "Settings" },
+  { icon: LayoutDashboard, label: "Dashboard", page: "dashboard" },
+  { icon: CheckSquare, label: "Tasks", page: "dashboard" },
+  { icon: Target, label: "Goals", page: "goals" },
+  { icon: BarChart2, label: "Insights", page: "insights" },
+  { icon: Settings, label: "Settings", page: "settings" },
 ]
 
-function Sidebar() {
+function Sidebar({ activePage, setActivePage }) {
   return (
     <div className="flex-1 flex flex-col p-4 overflow-hidden">
       <div className="flex items-center gap-2 mb-8 mt-2">
@@ -23,8 +23,9 @@ function Sidebar() {
         {navItems.map((item, index) => (
           <button
             key={index}
+            onClick={() => setActivePage(item.page)}
             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all
-              ${index === 0
+              ${activePage === item.page
                 ? "bg-purple-600 text-white"
                 : "text-gray-400 hover:bg-gray-800 hover:text-white"
               }`}

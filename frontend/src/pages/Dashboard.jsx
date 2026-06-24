@@ -4,6 +4,7 @@ import TaskList from "../components/TaskList"
 import AIAssistant from "../components/AIAssistant"
 import StatsBar from "../components/StatsBar"
 import MoodCheckin from "../components/MoodCheckin"
+import Goals from "./Goals"
 import { useGamification, XPPopup, BadgePopup, GamificationBar } from "../components/Gamification"
 
 const initialTasks = [
@@ -26,14 +27,13 @@ function Dashboard() {
     return saved ? JSON.parse(saved) : initialTasks
   })
   const [mood, setMood] = useState(null)
+  const [activePage, setActivePage] = useState("dashboard")
   const { stats, newBadge, xpPopup, addXP, BADGES } = useGamification(tasks)
 
   const handleSetTasks = (newTasks) => {
     const oldCompleted = tasks.filter(t => t.done).length
     const newCompleted = newTasks.filter(t => t.done).length
-    if (newCompleted > oldCompleted) {
-      addXP(20)
-    }
+    if (newCompleted > oldCompleted) addXP(20)
     setTasks(newTasks)
   }
 
@@ -42,7 +42,6 @@ function Dashboard() {
   const pending = tasks.filter(t => !t.done && !isOverdue(t.due, t.done)).length
   const total = tasks.length
   const productivity = total === 0 ? 0 : Math.round((completed / total) * 100)
-
   const statsData = { completed, overdue, pending, productivity }
 
   return (
@@ -51,14 +50,19 @@ function Dashboard() {
       <BadgePopup badge={newBadge} />
       <MoodCheckin onMoodSelect={(m) => setMood(m)} />
       <div className="flex flex-col w-64 bg-gray-900 border-r border-gray-800">
-        <Sidebar />
+        <Sidebar activePage={activePage} setActivePage={setActivePage} />
         <GamificationBar stats={stats} BADGES={BADGES} />
       </div>
       <div className="flex flex-col flex-1 overflow-hidden">
         <StatsBar stats={statsData} />
         <div className="flex flex-1 overflow-hidden">
-          <TaskList tasks={tasks} setTasks={handleSetTasks} />
-          <AIAssistant tasks={tasks} mood={mood} />
+          {activePage === "dashboard" && (
+            <>
+              <TaskList tasks={tasks} setTasks={handleSetTasks} />
+              <AIAssistant tasks={tasks} mood={mood} />
+            </>
+          )}
+          {activePage === "goals" && <Goals tasks={tasks} />}
         </div>
       </div>
     </div>
