@@ -2,7 +2,7 @@ import { LayoutDashboard, CheckSquare, Target, BarChart2, Settings, Zap } from "
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", page: "dashboard" },
-  { icon: CheckSquare, label: "Tasks", page: "dashboard" },
+  { icon: CheckSquare, label: "Tasks", page: "tasks" },
   { icon: Target, label: "Goals", page: "goals" },
   { icon: BarChart2, label: "Insights", page: "insights" },
   { icon: Settings, label: "Settings", page: "settings" },

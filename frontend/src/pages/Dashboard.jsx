@@ -9,10 +9,10 @@ import Insights from "./Insights"
 import { useGamification, XPPopup, BadgePopup, GamificationBar } from "../components/Gamification"
 
 const initialTasks = [
-  { id: 1, title: "Complete AI project report", priority: "high", due: "2026-06-22", done: false },
-  { id: 2, title: "Prepare hackathon presentation", priority: "high", due: "2026-06-23", done: false },
-  { id: 3, title: "Review ML assignment", priority: "medium", due: "2026-06-25", done: false },
-  { id: 4, title: "Submit lab record", priority: "low", due: "2026-06-27", done: true },
+  { id: 1, title: "Complete AI project report", priority: "high", due: "2026-06-24", done: false },
+  { id: 2, title: "Prepare hackathon presentation", priority: "high", due: "2026-06-25", done: false },
+  { id: 3, title: "Review ML assignment", priority: "medium", due: "2026-06-27", done: false },
+  { id: 4, title: "Submit lab record", priority: "low", due: "2026-06-29", done: false },
 ]
 
 function isOverdue(due, done) {
@@ -63,8 +63,23 @@ function Dashboard() {
               <AIAssistant tasks={tasks} mood={mood} />
             </>
           )}
+          {activePage === "tasks" && (
+            <>
+              <TaskList tasks={tasks} setTasks={handleSetTasks} />
+              <AIAssistant tasks={tasks} mood={mood} />
+            </>
+          )}
           {activePage === "goals" && <Goals tasks={tasks} />}
           {activePage === "insights" && <Insights tasks={tasks} />}
+          {activePage === "settings" && (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-center">
+                <div className="text-5xl mb-4">⚙️</div>
+                <h2 className="text-xl font-bold text-white mb-2">Settings</h2>
+                <p className="text-gray-400 text-sm">Coming soon...</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
